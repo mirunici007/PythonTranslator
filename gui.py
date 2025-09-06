@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import tkinter as tk
-from translator_logic import languages
+from translator_logic import languages, Translator
 
 class AutocompleteComboBox(ctk.CTkFrame):
     def __init__(self,master,values,height,width,placeholder_text):
@@ -75,7 +75,7 @@ class TranslatorApp(ctk.CTk):
 
         self.button_source = ctk.CTkButton(self.frame1, text = "Select", command = self.autocombo1.get_language,
                                             font = ctk.CTkFont(size = 15, weight = "bold"))
-        self.button_source.grid(row = 1, column = 1, padx = (20,0), pady = 10, sticky = "w")
+        self.button_source.grid(row = 1, column = 1, padx = (10,0), pady = 10, sticky = "w")
 
         self.text_input = ctk.CTkTextbox(self, width=250, height=200, fg_color="gray85", font = ctk.CTkFont(size = 15))
         self.text_input.grid(row=2, column=0, padx=10, pady=(0, 10), sticky="nsew")
@@ -88,7 +88,24 @@ class TranslatorApp(ctk.CTk):
 
         self.button_target = ctk.CTkButton(self.frame2, text = "Select", command = self.autocombo2.get_language,
                                             font = ctk.CTkFont(size = 15, weight = "bold"))
-        self.button_target.grid(row = 1, column = 1, padx = (0,0), pady = 10, sticky = "w")
+        self.button_target.grid(row = 1, column = 1, padx = (20,0), pady = 10, sticky = "w")
 
         self.text_output = ctk.CTkTextbox(self, width=250, height=200, fg_color="gray85", font = ctk.CTkFont(size = 15))
         self.text_output.grid(row=2, column=1, padx=(20,0), pady=(0, 10), sticky="nsew")
+
+        self.translate_button = ctk.CTkButton(self, text = "Translate", command = self.translate_input)
+        self.translate_button.grid(row = 3, column = 0, columnspan = 2, padx = 10, pady = 10, sticky = "nsew")
+
+    def translate_input(self):
+        input_text = self.text_input.get("1.0","end").strip()
+        source_lang = self.autocombo1.get_language()
+        target_lang = self.autocombo2.get_language()
+
+        if source_lang not in languages or target_lang not in languages or not input_text:
+            return
+        
+        translator = Translator(source_lang, target_lang)
+        translated_text = translator.translate_text(input_text)
+
+        self.text_output.delete("1.0", "end")
+        self.text_output.insert("1.0",translated_text)

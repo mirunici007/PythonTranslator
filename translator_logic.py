@@ -66,4 +66,16 @@ languages = {
     "Zulu": "zu",
 }
 
-#def translate_text(input_text, source_lang, target_lang):
+class Translator:
+    def __init__(self, source_language, target_language):
+
+        self.source_language = source_language
+        self.target_language = target_language
+        
+    def translate_text(self, input_text):
+        if self.source_language not in languages.keys() or self.target_language not in languages.keys():
+            raise ValueError("Unsupported language")
+
+        translated_text = GoogleTranslator(source=languages[self.source_language],
+                                            target=languages[self.target_language]).translate(input_text)
+        return translated_text
