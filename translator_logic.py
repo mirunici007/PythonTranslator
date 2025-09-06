@@ -1,4 +1,4 @@
-from deep_translator import GoogleTranslate
+from deep_translator import GoogleTranslator
 
 languages = {
     #  Western Europe
@@ -66,5 +66,4 @@ languages = {
     "Zulu": "zu",
 }
 
-def translate_text(input_text, source_lang, target_lang):
-    
+#def translate_text(input_text, source_lang, target_lang):
