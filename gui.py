@@ -62,39 +62,40 @@ class TranslatorApp(ctk.CTk):
         super().__init__()
 
         self.title("Translator App")
-        self.geometry("800x600")
+        self.geometry("1000x600")
 
         self.label = ctk.CTkLabel(self, text = "Translator App", font = ctk.CTkFont(size = 30, weight = "bold"))
         self.label.grid(row = 0,column = 0, columnspan = 4, padx = 275, pady = 10, sticky = "nsew")
 
         self.frame1 = ctk.CTkFrame(self, fg_color = "transparent")
-        self.frame1.grid(row = 1, column = 0, pady = 10, sticky = "w")
+        self.frame1.grid(row = 1, column = 0, padx = (40, 0), pady = 10, sticky = "w")
 
-        self.autocombo1 = AutocompleteComboBox(self.frame1, list(languages.keys()),200,250,"Select Language")
+        self.autocombo1 = AutocompleteComboBox(self.frame1, list(languages.keys()),500,250,"   Select Language")
         self.autocombo1.grid(row = 1, column = 0, padx=10, pady = 10, sticky = "e")
 
-        self.button_source = ctk.CTkButton(self.frame1, text = "Select", command = self.autocombo1.get_language,
-                                            font = ctk.CTkFont(size = 15, weight = "bold"))
-        self.button_source.grid(row = 1, column = 1, padx = (10,0), pady = 10, sticky = "w")
+        #self.button_source = ctk.CTkButton(self.frame1, text = "Select", command = self.autocombo1.get_language,
+        #                                    font = ctk.CTkFont(size = 15, weight = "bold"))
+        #self.button_source.grid(row = 1, column = 1, padx = (10,0), pady = 10, sticky = "w")
 
-        self.text_input = ctk.CTkTextbox(self, width=250, height=200, fg_color="gray85", font = ctk.CTkFont(size = 15))
-        self.text_input.grid(row=2, column=0, padx=10, pady=(0, 10), sticky="nsew")
+        self.text_input = ctk.CTkTextbox(self, width=400, height=200, fg_color="gray85", font = ctk.CTkFont(size = 20))
+        self.text_input.grid(row=2, column=0, padx=(50,20), pady=(0, 10), sticky="nsew")
 
         self.frame2 = ctk.CTkFrame(self, fg_color = "transparent")
         self.frame2.grid(row = 1, column = 1, pady = 10, sticky = "w")
 
-        self.autocombo2 = AutocompleteComboBox(self.frame2, list(languages.keys()),200,250,"Select Language")
+        self.autocombo2 = AutocompleteComboBox(self.frame2, list(languages.keys()),500,250,"   Select Language")
         self.autocombo2.grid(row = 1, column = 0, padx=(20,0), pady = 10, sticky = "w")
 
-        self.button_target = ctk.CTkButton(self.frame2, text = "Select", command = self.autocombo2.get_language,
-                                            font = ctk.CTkFont(size = 15, weight = "bold"))
-        self.button_target.grid(row = 1, column = 1, padx = (20,0), pady = 10, sticky = "w")
+        #self.button_target = ctk.CTkButton(self.frame2, text = "Select", command = self.autocombo2.get_language,
+        #                                    font = ctk.CTkFont(size = 15, weight = "bold"))
+        #self.button_target.grid(row = 1, column = 1, padx = (20,0), pady = 10, sticky = "w")
 
-        self.text_output = ctk.CTkTextbox(self, width=250, height=200, fg_color="gray85", font = ctk.CTkFont(size = 15))
+        self.text_output = ctk.CTkTextbox(self, width=400, height=200, fg_color="gray85", font = ctk.CTkFont(size = 20))
         self.text_output.grid(row=2, column=1, padx=(20,0), pady=(0, 10), sticky="nsew")
 
-        self.translate_button = ctk.CTkButton(self, text = "Translate", command = self.translate_input)
-        self.translate_button.grid(row = 3, column = 0, columnspan = 2, padx = 10, pady = 10, sticky = "nsew")
+        self.translate_button = ctk.CTkButton(self, text = "Translate", command = self.translate_input, 
+                                              font = ctk.CTkFont(size = 20, weight = "bold"), width = 150)
+        self.translate_button.grid(row = 3, column = 0, padx = (50,0), pady = (0,), sticky = "ew",columnspan=2)
 
     def translate_input(self):
         input_text = self.text_input.get("1.0","end").strip()
