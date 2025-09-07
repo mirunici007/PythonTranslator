@@ -62,10 +62,25 @@ class TranslatorApp(ctk.CTk):
         super().__init__()
 
         self.title("Translator App")
-        self.geometry("1000x600")
+        self.geometry("1125x600")
+        self.app_language = "English"
+        self.select_lang = "select language"
+        
 
         self.label = ctk.CTkLabel(self, text = "Translator App", font = ctk.CTkFont(size = 30, weight = "bold"))
-        self.label.grid(row = 0,column = 0, columnspan = 4, padx = 275, pady = 10, sticky = "nsew")
+        self.label.grid(row = 0,column = 0, columnspan = 4, padx = 375, pady = 10, sticky = "w")
+
+        self.lang_frame = ctk.CTkFrame(self, bg_color = "transparent", height=50)
+        self.lang_frame.grid(row = 0, column = 2, padx = (0, 0), pady = 10, sticky = "nw")
+
+        self.lang_choose = AutocompleteComboBox(self.lang_frame, list(languages.keys()),300,200,"   App Language",
+                                                )
+        self.lang_choose.grid(row = 0, column = 0, padx = (0, 20))
+        self.lang_choose.entry_text.insert(0,"       "+self.app_language)
+
+        
+        self.translate_window_button = ctk.CTkButton(self.lang_frame, text="Translate window", command=self.update_ui_language, font=ctk.CTkFont(size=15, weight="bold"))
+        self.translate_window_button.grid(row=1, column=0, columnspan=2, pady=(10,0), sticky="ew", padx=(0, 20))
 
         self.frame1 = ctk.CTkFrame(self, fg_color = "transparent")
         self.frame1.grid(row = 1, column = 0, padx = (40, 0), pady = 10, sticky = "w")
@@ -97,10 +112,43 @@ class TranslatorApp(ctk.CTk):
                                               font = ctk.CTkFont(size = 20, weight = "bold"), width = 150)
         self.translate_button.grid(row = 3, column = 0, padx = (50,0), pady = (0,), sticky = "ew",columnspan=2)
 
+        
+        self.label.configure(text="Translator App", font=ctk.CTkFont(family="Arial", size=30, weight="bold"))
+        if hasattr(self, 'button_source'):
+            self.button_source.configure(text="Select", font=ctk.CTkFont(family="Arial", size=15))
+        if hasattr(self, 'button_target'):
+            self.button_target.configure(text="Select", font=ctk.CTkFont(family="Arial", size=15))
+        self.translate_button.configure(text="Translate", font=ctk.CTkFont(family="Arial", size=15))
+        if hasattr(self, 'translate_app_button'):
+            self.translate_app_button.configure(text="Select application language", font=ctk.CTkFont(family="Arial", size=15))
+        if hasattr(self, 'confirm_lang_button'):
+            self.confirm_lang_button.configure(text="Confirm application language", font=ctk.CTkFont(family="Arial", size=15))
+        if hasattr(self, 'translate_window_button'):
+            self.translate_window_button.configure(text="Translate window", font=ctk.CTkFont(family="Arial", size=15, weight="bold"))
+        self.autocombo1.entry_text.configure(placeholder_text="Select Language", font=ctk.CTkFont(family="Arial", size=15))
+        self.autocombo2.entry_text.configure(placeholder_text="Select Language", font=ctk.CTkFont(family="Arial", size=15))
+        self.lang_choose.entry_text.configure(placeholder_text="App Language", font=ctk.CTkFont(family="Arial", size=15))
+
+        
+        self.language_keys = list(languages.keys())
+        
+        self.lang_display_map = {}
+        self.lang_reverse_map = {}
+        
+        for lang in self.language_keys:
+            self.lang_display_map[lang] = lang
+            self.lang_reverse_map[lang] = lang
+        self.lang_choose.values = self.language_keys
+        self.autocombo1.values = self.language_keys
+        self.autocombo2.values = self.language_keys
+
     def translate_input(self):
         input_text = self.text_input.get("1.0","end").strip()
-        source_lang = self.autocombo1.get_language()
-        target_lang = self.autocombo2.get_language()
+        
+        source_lang_display = self.autocombo1.get_language()
+        target_lang_display = self.autocombo2.get_language()
+        source_lang = self.lang_reverse_map.get(source_lang_display, source_lang_display)
+        target_lang = self.lang_reverse_map.get(target_lang_display, target_lang_display)
 
         if source_lang not in languages or target_lang not in languages or not input_text:
             return
@@ -109,4 +157,42 @@ class TranslatorApp(ctk.CTk):
         translated_text = translator.translate_text(input_text)
 
         self.text_output.delete("1.0", "end")
-        self.text_output.insert("1.0",translated_text)
+        self.text_output.insert("1.0", translated_text)
+
+    def update_app_language(self):
+        new_language = self.lang_choose.get_language()
+        if new_language in languages:
+            self.app_language = new_language
+            self.lang_choose.entry_text.delete(0,"end")
+            self.lang_choose.entry_text.insert(0,"       "+self.app_language)
+            self.label.configure(text=f"Translator App ({self.app_language})")
+            
+    def update_ui_language(self):
+        selected_lang_display = self.lang_choose.get_language()
+        
+        selected_lang = self.lang_reverse_map.get(selected_lang_display, selected_lang_display)
+        if not selected_lang or selected_lang not in languages:
+            return
+        translator = Translator("English", selected_lang)
+        self.label.configure(text=translator.translate_text("Translator App"), font=ctk.CTkFont(family="Arial", size=30, weight="bold"))
+        if hasattr(self, 'button_source'):
+            self.button_source.configure(text=translator.translate_text("Select"), font=ctk.CTkFont(family="Arial", size=15))
+        if hasattr(self, 'button_target'):
+            self.button_target.configure(text=translator.translate_text("Select"), font=ctk.CTkFont(family="Arial", size=15))
+        self.translate_button.configure(text=translator.translate_text("Translate"), font=ctk.CTkFont(family="Arial", size=15))
+        if hasattr(self, 'translate_app_button'):
+            self.translate_app_button.configure(text=translator.translate_text("Select application language"), font=ctk.CTkFont(family="Arial", size=15))
+        if hasattr(self, 'confirm_lang_button'):
+            self.confirm_lang_button.configure(text=translator.translate_text("Confirm application language"), font=ctk.CTkFont(family="Arial", size=15))
+        if hasattr(self, 'translate_window_button'):
+            self.translate_window_button.configure(text=translator.translate_text("Translate window"), font=ctk.CTkFont(family="Arial", size=15, weight="bold"))
+        
+        translated_languages = [translator.translate_text(lang) for lang in self.language_keys]
+        self.lang_display_map = dict(zip(self.language_keys, translated_languages))
+        self.lang_reverse_map = dict(zip(translated_languages, self.language_keys))
+        self.lang_choose.values = translated_languages
+        self.autocombo1.values = translated_languages
+        self.autocombo2.values = translated_languages
+        self.lang_choose.entry_text.configure(placeholder_text=translator.translate_text("App Language"), font=ctk.CTkFont(family="Arial", size=15))
+        self.autocombo1.entry_text.configure(placeholder_text=translator.translate_text("Select Language"), font=ctk.CTkFont(family="Arial", size=15))
+        self.autocombo2.entry_text.configure(placeholder_text=translator.translate_text("Select Language"), font=ctk.CTkFont(family="Arial", size=15))
